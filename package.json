@@ -1,0 +1,12 @@
+{
+  "name": "falcon-cam-me",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/MaxBittker/falcon-cam-me",
+  "author": "maxbittker <maxbittker@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.3",
+    "tinyspeck": "^1.4.2"
+  }
+}
