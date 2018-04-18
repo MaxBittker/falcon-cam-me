@@ -1,58 +1,44 @@
 "use strict";
 const express = require("express");
 const app = express();
-const secrets = require("./secret.js");
-
-const ts = require("tinyspeck");
-app.get("/", (req, res) => res.send("Hello World!"));
-app.listen(3001, () => console.log("Example app listening on port 3000!"));
 app.use(express.static("out"));
-("use strict");
+app.listen(3001, () => console.log("Example app listening on port 3000!"));
+
+const secrets = require("./secret.js");
+const ts = require("tinyspeck");
 
 let i = 0;
 
-var slack = ts.instance({token:secrets.token});
-var connected = false;
+var slack = ts.instance({ token: secrets.token });
 
 slack.on("/falcon", payload => {
   let user_id = payload.user_id;
   let response_url = payload.response_url;
   makeGif(url => {
-    slack.send(response_url, {
- unfurl_links: true,
-text:"",
-response_type: "in_channel",
-attachments:[
-{
-   "title": "the birds",
-   "image_url": url,
-   "color": "#764FA5"
-}]
-}).then(
-      res => {
-        // on success
-        console.log("Response sent to /falcon slash command");
-      },
-      reason => {
-        console.log(
-          "An error occurred:" + reason
-        );
-      }
-    );
+    slack
+      .send(response_url, {
+        unfurl_links: true,
+        text: "",
+        response_type: "in_channel",
+        attachments: [
+          {
+            title: "the birds",
+            image_url: url,
+            color: "#764FA5"
+          }
+        ]
+      })
+      .then(
+        res => {
+          // on success
+          console.log("Response sent to /falcon slash command");
+        },
+        reason => {
+          console.log("An error occurred:" + reason);
+        }
+      );
   });
 });
-
-function getConnected() {
-  return new Promise(function(resolving) {
-    if (!connected) {
-      connected = datastore.connect().then(function() {
-        resolving();
-      });
-    } else {
-      resolving();
-    }
-  });
-}
 
 // incoming http requests
 slack.listen("3000");
@@ -69,9 +55,6 @@ function makeGif(cb) {
       "5",
       `out/falcon${cI}.gif`
     ]);
-  ls.stdout.on("data", data => {
-    // console.log(`stdout: ${data}`);
-  });
 
   ls.stderr.on("data", data => {
     console.log(`stderr: ${data}`);
@@ -81,5 +64,3 @@ function makeGif(cb) {
     cb && cb(`http://159.203.112.6:3001/falcon${cI}.gif`);
   });
 }
-
-// makeGif();
