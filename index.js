@@ -1,6 +1,7 @@
 "use strict";
 const express = require("express");
 const app = express();
+const secrets = require("./secret.js");
 
 const ts = require("tinyspeck");
 app.get("/", (req, res) => res.send("Hello World!"));
@@ -10,21 +11,31 @@ app.use(express.static("out"));
 
 let i = 0;
 
-var slack = ts.instance({});
+var slack = ts.instance({token:secrets.token});
 var connected = false;
 
 slack.on("/falcon", payload => {
   let user_id = payload.user_id;
   let response_url = payload.response_url;
   makeGif(url => {
-    slack.send(response_url, url).then(
+    slack.send(response_url, {
+ unfurl_links: true,
+text:"",
+response_type: "in_channel",
+attachments:[
+{
+   "title": "the birds",
+   "image_url": url,
+   "color": "#764FA5"
+}]
+}).then(
       res => {
         // on success
         console.log("Response sent to /falcon slash command");
       },
       reason => {
         console.log(
-          "An error occurred when responding to /count slash command: " + reason
+          "An error occurred:" + reason
         );
       }
     );
@@ -67,7 +78,7 @@ function makeGif(cb) {
   });
 
   ls.on("close", code => {
-    cb && cb(`http://159.203.112.6:3000/falcon${cI}.gif`);
+    cb && cb(`http://159.203.112.6:3001/falcon${cI}.gif`);
   });
 }
 
